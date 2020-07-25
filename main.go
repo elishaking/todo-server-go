@@ -56,12 +56,24 @@ func getTodoByID(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	json.NewEncoder(w).Encode(&Todo{})
+	fmt.Fprintln(w, "No todos match the id:", params["id"])
 }
 
 // Update a Todo by id
 func updateTodoByID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
 
+	for idx, todo := range todos {
+		if todo.ID == params["id"] {
+			json.NewDecoder(r.Body).Decode(&todos[idx])
+			todos[idx].ID = params["id"]
+			fmt.Fprintln(w, "Updated todo with id:", params["id"])
+			return
+		}
+	}
+
+	fmt.Fprintln(w, "No todos match the id:", params["id"])
 }
 
 // Delete a Todo by id
