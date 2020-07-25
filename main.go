@@ -66,7 +66,18 @@ func updateTodoByID(w http.ResponseWriter, r *http.Request) {
 
 // Delete a Todo by id
 func deleteTodoByID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
 
+	for idx, todo := range todos {
+		if todo.ID == params["id"] {
+			todos = append(todos[:idx], todos[idx+1:]...)
+			fmt.Fprintln(w, "Deleted todo with id:", params["id"])
+			return
+		}
+	}
+
+	fmt.Fprintln(w, "No todos match the id:", params["id"])
 }
 
 func main() {
