@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -24,9 +25,12 @@ type User struct {
 	DateCreated string `json:"dateCreated"`
 }
 
+var todos []Todo
+
 // Get all Todos
 func getTodos(w http.ResponseWriter, r *http.Request) {
-
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(todos)
 }
 
 // Create a Todo
@@ -54,6 +58,10 @@ func main() {
 
 	// Init Router
 	router := mux.NewRouter()
+
+	// Mock Data
+	todos = append(todos, Todo{ID: "1", Title: "New Todo", Description: "This is a Todo", Date: "now", User: &User{ID: "1", Name: "King", DateCreated: "now"}})
+	todos = append(todos, Todo{ID: "2", Title: "New Todo 2", Description: "This is a Todo 2", Date: "now", User: &User{ID: "2", Name: "King", DateCreated: "now"}})
 
 	// Route Handlers / Endpoints
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
