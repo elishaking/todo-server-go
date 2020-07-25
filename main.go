@@ -40,7 +40,17 @@ func createTodo(w http.ResponseWriter, r *http.Request) {
 
 // Get a Todo by id
 func getTodoByID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
 
+	for _, todo := range todos {
+		if todo.ID == params["id"] {
+			json.NewEncoder(w).Encode(todo)
+			return
+		}
+	}
+
+	json.NewEncoder(w).Encode(&Todo{})
 }
 
 // Update a Todo by id
@@ -69,7 +79,7 @@ func main() {
 	})
 
 	router.HandleFunc("/todos", getTodos).Methods("GET")
-	router.HandleFunc("/todos/", createTodo).Methods("POST")
+	router.HandleFunc("/todos", createTodo).Methods("POST")
 
 	router.HandleFunc("/todos/{id}", getTodoByID).Methods("GET")
 	router.HandleFunc("/todos/{id}", updateTodoByID).Methods("PUT")
