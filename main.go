@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -35,7 +36,12 @@ func getTodos(w http.ResponseWriter, r *http.Request) {
 
 // Create a Todo
 func createTodo(w http.ResponseWriter, r *http.Request) {
-
+	w.Header().Set("Content-Type", "application/json")
+	var todo Todo
+	_ = json.NewDecoder(r.Body).Decode(&todo)
+	todo.ID = strconv.Itoa(len(todos) + 1)
+	todos = append(todos, todo)
+	json.NewEncoder(w).Encode(todo)
 }
 
 // Get a Todo by id
